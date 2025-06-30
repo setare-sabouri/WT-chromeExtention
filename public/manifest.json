@@ -2,11 +2,17 @@
   "manifest_version": 3,
   "name": "Swedish Letter Replacer",
   "version": "1.0.1",
-  "description": "Replaces ö, ä, å with oe, ae, aa in form fields on shortcut, or Replaces flight IATA codes",
-  "permissions": ["scripting", "activeTab", "commands"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "type": "module"
+    }
+  ],
   "background": {
     "service_worker": "background.js"
   },
+  "permissions": ["scripting", "activeTab", "commands"],
   "action": {
     "default_icon": {
       "128": "assets/icon.png"
