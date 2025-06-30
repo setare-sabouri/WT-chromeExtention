@@ -19,6 +19,7 @@ import { replaceSwedishLetters } from "./utils/swedishReplacer.js";
   }
 
   async function handleForm() {
+
     const inputs = [...document.querySelectorAll('input[type="text"], textarea')];
     const date = new Date();
     const formattedDate =
@@ -31,7 +32,11 @@ import { replaceSwedishLetters } from "./utils/swedishReplacer.js";
       /^[A-Z]{1,3}\d{1,5}$/i.test(input.value.trim())
     );
 
-    if (!flightInput) return;
+    if (!flightInput) {
+      replaceSwedishLetters(inputs); // Always do this
+      return;
+    }
+
 
     const flightCode = flightInput.value.trim().toUpperCase();
     const route = await lookupRoute(flightCode);
@@ -47,17 +52,13 @@ import { replaceSwedishLetters } from "./utils/swedishReplacer.js";
         inputs[i].value = filled === 0
           ? formattedDate
           : filled === 1
-          ? route.origin
-          : route.destination;
+            ? route.origin
+            : route.destination;
         filled++;
       }
     }
 
-    console.log(replaceSwedishLetters("Örebro, Älmhult, Åre"));
-    // Normalize Swedish letters
-    inputs.forEach(input => {
-      input.value = replaceSwedishLetters(input.value)
-    });
+    replaceSwedishLetters(inputs);
   }
 
   handleForm();
