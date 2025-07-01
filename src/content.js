@@ -1,3 +1,4 @@
+import { getFormattedDate } from "./utils/dateFormatter.js";
 import { replaceSwedishLetters } from "./utils/swedishReplacer.js";
 
 (() => {
@@ -19,13 +20,12 @@ import { replaceSwedishLetters } from "./utils/swedishReplacer.js";
   }
 
   async function handleForm() {
-
+    
     const inputs = [...document.querySelectorAll('input[type="text"], textarea')];
     const date = new Date();
-    const formattedDate =
-      String(date.getDate()).padStart(2, '0') +
-      date.toLocaleString('en-GB', { month: 'short' }) +
-      String(date.getFullYear()).slice(-2);
+    const formattedDate =getFormattedDate()
+
+    
 
     // Updated regex: 1–3 letters + 1–5 digits
     const flightInput = [...inputs].reverse().find(input =>
@@ -57,7 +57,6 @@ import { replaceSwedishLetters } from "./utils/swedishReplacer.js";
         filled++;
       }
     }
-
     replaceSwedishLetters(inputs);
   }
 
