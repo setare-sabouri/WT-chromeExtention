@@ -22,28 +22,27 @@ import { replaceSwedishLetters } from "./utils/swedishReplacer.js";
   async function handleForm() {
     
     const inputs = [...document.querySelectorAll('input[type="text"], textarea')];
-    const date = new Date();
-    const formattedDate =getFormattedDate()
+    replaceSwedishLetters(inputs);
+  
 
-    
+
 
     // Updated regex: 1–3 letters + 1–5 digits
     const flightInput = [...inputs].reverse().find(input =>
       /^[A-Z]{1,3}\d{1,5}$/i.test(input.value.trim())
     );
 
-    if (!flightInput) {
-      replaceSwedishLetters(inputs); // Always do this
-      return;
-    }
+    if (!flightInput) return;
 
 
     const flightCode = flightInput.value.trim().toUpperCase();
     const route = await lookupRoute(flightCode);
-    if (!route?.origin || !route.destination) {
-      alert(`Could not find route for "${flightCode}".`);
-      return;
+
+      if (!route?.origin || !route.destination) {
+      console.warn(`Could not find route for "${flightCode}".`);
+      return; 
     }
+      const formattedDate =getFormattedDate()
 
     let filled = 0;
     const startIndex = inputs.indexOf(flightInput);
@@ -57,7 +56,7 @@ import { replaceSwedishLetters } from "./utils/swedishReplacer.js";
         filled++;
       }
     }
-    replaceSwedishLetters(inputs);
+   
   }
 
   handleForm();

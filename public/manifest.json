@@ -21,7 +21,8 @@
   "commands": {
     "replace-wordorflight": {
       "suggested_key": {
-        "default": "Ctrl+M"
+        "default": "Ctrl+M",
+      "mac": "Command+Shift+Y"
       },
       "description": "Fetch IATA codes of the flight and Replace Swedish characters in form inputs by Click of CTRL + M "
     }
