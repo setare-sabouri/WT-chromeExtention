@@ -7,7 +7,6 @@ import { replaceSwedishLetters } from "./utils/swedishReplacer.js";
       const res = await fetch(`https://api.adsbdb.com/v0/callsign/${flightCode}`);
       const json = await res.json();
       const route = json.response?.flightroute;
-      console.log(res)
       if (!route) return null;
       return {
         origin: route.origin?.iata_code,
@@ -19,44 +18,48 @@ import { replaceSwedishLetters } from "./utils/swedishReplacer.js";
     }
   }
 
+  function setFieldValueProperly(input, value) {
+    const prototype = Object.getPrototypeOf(input);
+    const valueSetter = Object.getOwnPropertyDescriptor(prototype, 'value')?.set;
+    valueSetter?.call(input, value);
+
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+    input.dispatchEvent(new Event('blur', { bubbles: true })); // triggers validation if any
+  }
+
   async function handleForm() {
-    
     const inputs = [...document.querySelectorAll('input[type="text"], textarea')];
     replaceSwedishLetters(inputs);
-  
 
-
-
-    // Updated regex: 1–3 letters + 1–5 digits
     const flightInput = [...inputs].reverse().find(input =>
       /^[A-Z]{1,3}\d{1,5}$/i.test(input.value.trim())
     );
 
     if (!flightInput) return;
 
-
     const flightCode = flightInput.value.trim().toUpperCase();
     const route = await lookupRoute(flightCode);
-
-      if (!route?.origin || !route.destination) {
+    if (!route?.origin || !route.destination) {
       console.warn(`Could not find route for "${flightCode}".`);
-      return; 
+      return;
     }
-      const formattedDate =getFormattedDate()
+
+    const formattedDate = getFormattedDate();
+    const startIndex = inputs.indexOf(flightInput);
 
     let filled = 0;
-    const startIndex = inputs.indexOf(flightInput);
     for (let i = startIndex + 1; i < inputs.length && filled < 3; i++) {
       if (!inputs[i].value.trim()) {
-        inputs[i].value = filled === 0
-          ? formattedDate
-          : filled === 1
-            ? route.origin
-            : route.destination;
+        const newValue =
+          filled === 0 ? formattedDate
+          : filled === 1 ? route.origin
+          : route.destination;
+
+        setFieldValueProperly(inputs[i], newValue);
         filled++;
       }
     }
-   
   }
 
   handleForm();
